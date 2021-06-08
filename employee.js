@@ -3,6 +3,9 @@ const inquirer = require('inquirer');
 const methods = require('./methods.js');
 
 
+/* Current status of project.  functions working but all on one file, able to add so far in department, and info.  problem wiht
+add role funciton right now.  Need to read about the decemil one. */
+
 const connection = mysql.createConnection({
     host: 'localhost',
   
@@ -23,11 +26,6 @@ const connection = mysql.createConnection({
     inquirer
       .prompt([
         {
-          name: 'id',
-          type: 'input',
-          message: 'What is the Department ID?',
-        },                                                                          // Working on reqiure statments right now
-        {
           name: 'name',
           type: 'input',
           message: 'What is the name of the Department?',
@@ -39,17 +37,17 @@ const connection = mysql.createConnection({
           'INSERT INTO departments SET ?',
           // QUESTION: What does the || 0 do?
           {
-            id: answer.id || 0,
+            
             name: answer.name,
           },
           (err) => {
             if (err) throw err;
-            console.log('Your auction was created successfully!');
+            console.log('The department was added successfully!');
             // re-prompt the user for if they want to bid or post
-            // employee.start();
+            start();
           }
         );
-        connection.end();
+    
       });
 
 
@@ -82,54 +80,70 @@ const connection = mysql.createConnection({
           // QUESTION: What does the || 0 do?
           {
             title: answer.title,
-            salary: answer.salary,
+            salary: answer.salary || 0,
             department_id: answer.departId
           },
           (err) => {
             if (err) throw err;
-            console.log('Your auction was created successfully!');
+            console.log('The role was added successfully!');
             // re-prompt the user for if they want to bid or post
-            // employee.start();
+            start();
           }
         );
-        connection.end();
+     
+        
       });
 
 
   };
 
-  const addDepartment = () => {
+  const addEmployee = () => {
     // prompt for info about the item being put up for auction
     inquirer
       .prompt([
         {
-          name: 'id',
+          name: 'firstName',
           type: 'input',
-          message: 'What is the Department ID?',
-        },                                                                          // Working on reqiure statments right now
+          message: 'What is the first name of Employee?',
+        },                                                                       
         {
-          name: 'name',
+          name: 'lastName',
           type: 'input',
-          message: 'What is the name of the Department?',
+          message: 'What is the last name of the Employee?',
         },
+        {
+          name: 'manager',
+          type: 'input',
+          message: 'Is this Employee an manager is so enter manager number if not slip?',
+        },
+        {
+          name: 'roleId',
+          type: 'input',
+          message: 'What is the ID number for this role?',
+        },
+       
+
       ])
+
       .then((answer) => {
         // when finished prompting, insert a new item into the db with that info
         connection.query(
-          'INSERT INTO departments SET ?',
+          'INSERT INTO employees SET ?',
           // QUESTION: What does the || 0 do?
           {
-            id: answer.id || 0,
-            name: answer.name,
+            first_name: answer.firstName,
+            last_name: answer.lastName,
+            role_id: answer.roleId,
+            manager_id: answer.manager || 0
           },
           (err) => {
             if (err) throw err;
-            console.log('Your auction was created successfully!');
+            console.log('The employee was added successfully!');
             // re-prompt the user for if they want to bid or post
-            // employee.start();
+            start();
           }
         );
-        connection.end();
+        
       });
 
 
@@ -143,7 +157,7 @@ const connection = mysql.createConnection({
         name: 'start',
         type: 'list',
         message: 'Please Select either Employee Info, Employee Role, or the Department. ',
-        choices: ['Info', 'Role', 'Department'],
+        choices: ['Info', 'Role', 'Department', 'End'],
       })
       .then((response) => {
       console.log(response.start)
@@ -151,16 +165,22 @@ const connection = mysql.createConnection({
       switch(response.start){
         case 'Info':
           console.log("The info case works");
+          addEmployee();
           break;
         case 'Role':
           console.log("The Role case works");
+          addRole();
           break;
         case 'Department':
           console.log("The department case works");
             addDepartment();
           break;
+        case 'End':
+          connection.end();
+          break;
         default:
           console.log("Something went wrong");
+          start();
 
       }
 
@@ -176,54 +196,12 @@ const connection = mysql.createConnection({
   };
 
 
-const addEmployee = () => {
-    // prompt for info about the item being put up for auction
-    // inquirer
-    //   .prompt([
-    //     {
-    //       name: 'item',
-    //       type: 'input',
-    //       message: 'What is the item you would like to submit?',
-    //     },
-    //     {
-    //       name: 'category',
-    //       type: 'input',
-    //       message: 'What category would you like to place your auction in?',
-    //     },
-    //     {
-    //       name: 'startingBid',
-    //       type: 'input',
-    //       message: 'What would you like your starting bid to be?',
-    //       validate(value) {
-    //         if (isNaN(value) === false) {
-    //           return true;
-    //         }
-    //         return false;
-    //       },
-    //     },
-    //   ])
-    //   .then((answer) => {
-    //     // when finished prompting, insert a new item into the db with that info
-    //     connection.query(
-    //       'INSERT INTO auctions SET ?',
-    //       // QUESTION: What does the || 0 do?
-    //       {
-    //         item_name: answer.item,
-    //         category: answer.category,
-    //         starting_bid: answer.startingBid || 0,
-    //         highest_bid: answer.startingBid || 0,
-    //       },
-    //       (err) => {
-    //         if (err) throw err;
-    //         console.log('Your auction was created successfully!');
-    //         // re-prompt the user for if they want to bid or post
-            start();
-      //     }
-      //   );
-      // });
-  };
+connection.connect((err) => {
+  if (err) throw err;
+  // run the start function after the connection is made to prompt the user
+  start();
+});
 
-  addEmployee();
 
 
  
