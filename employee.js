@@ -1,107 +1,37 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-const methods = require('./methods.js');
+const viewMethods = require('./methods/viewMethods');
+const addMethods = require('./methods/addMethods');
+const deleteMethods = require('./methods/deleteMethods');
+const updateMethods = require('./methods/updateMethods')
+const cTable = require('console.table');
+const connection = require('./db');
+let startMethods = {};
 
 
-/* Current status of project.  functions working but all on one file, able to add so far in department, and info.  problem wiht
-add role funciton right now.  Need to read about the decemil one. */
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-  
-    // Your port; if not 3306
-    port: 3306,
-  
-    // Your username
-    user: 'root',
-  
-    // Your password
-    password: 'chargersrt8!',
-    database: 'employeeTracker_DB',
-  });
+  start = () => {
 
-
-  const addDepartment = () => {
-    // prompt for info about the item being put up for auction
-    inquirer
-      .prompt([
-        {
-          name: 'name',
-          type: 'input',
-          message: 'What is the name of the Department?',
-        },
-      ])
-      .then((answer) => {
-        // when finished prompting, insert a new item into the db with that info
-        connection.query(
-          'INSERT INTO departments SET ?',
-          // QUESTION: What does the || 0 do?
-          {
-            
-            name: answer.name,
-          },
-          (err) => {
-            if (err) throw err;
-            console.log('The department was added successfully!');
-            // re-prompt the user for if they want to bid or post
-            start();
-          }
-        );
-    
-      });
-
-
-  };
-
-  const addRole = () => {
-    // prompt for info about the item being put up for auction
-    inquirer
-      .prompt([
-        {
-          name: 'title',
-          type: 'input',
-          message: 'What is the title for this role?',
-        },                                                                          // Working on reqiure statments right now
-        {
-          name: 'salary',
-          type: 'input',
-          message: 'What is the Salary for this role?',
-        },
-        {
-          name: 'departId',
-          type: 'input',
-          message: 'What is the department ID?',
-        },
-      ])
-      .then((answer) => {
-        // when finished prompting, insert a new item into the db with that info
-        connection.query(
-          'INSERT INTO employee_roles SET ?',
-          // QUESTION: What does the || 0 do?
-          {
-            title: answer.title,
-            salary: answer.salary || 0,
-            department_id: answer.departId
-          },
-          (err) => {
-            if (err) throw err;
-            console.log('The role was added successfully!');
-            // re-prompt the user for if they want to bid or post
-            start();
-          }
-        );
-     
+    const startQuestions = [
         
-      });
+      {
+        name: 'start',
+        type: 'list',
+        message: 'Please Select either add a new Employee, or add a Department, or view Employees, Roles, Deparments, or all. ',
+        choices: ['Add New Employee', 'Add Department', 'Add Role', 'View Employees', 'View Roles',
+        'View Departments', 'View All', 'Delete Employees, Roles, or Departments','Update Roles', 'End'],
+      },  
+  ]
 
+inquirer.prompt(startQuestions)
 
-  };
+.then((response) => {
+  // console.log(response)
 
-  const addEmployee = () => {
-    // prompt for info about the item being put up for auction
-    inquirer
-      .prompt([
-        {
+  switch(response.start){
+    case 'Add New Employee':
+      const employeeQuestions = [
+        {                                                    
           name: 'firstName',
           type: 'input',
           message: 'What is the first name of Employee?',
@@ -121,90 +51,256 @@ const connection = mysql.createConnection({
           type: 'input',
           message: 'What is the ID number for this role?',
         },
-       
-
-      ])
-
-      .then((answer) => {
-        // when finished prompting, insert a new item into the db with that info
-        connection.query(
-          'INSERT INTO employees SET ?',
-          // QUESTION: What does the || 0 do?
-          {
-            first_name: answer.firstName,
-            last_name: answer.lastName,
-            role_id: answer.roleId,
-            manager_id: answer.manager || 0
-          },
-          (err) => {
-            if (err) throw err;
-            console.log('The employee was added successfully!');
-            // re-prompt the user for if they want to bid or post
-            start();
-          }
-        );
-        
-      });
-
-
-  };
-
-  
-
-  const start = () => {
-    inquirer
-      .prompt({
-        name: 'start',
-        type: 'list',
-        message: 'Please Select either Employee Info, Employee Role, or the Department. ',
-        choices: ['Info', 'Role', 'Department', 'End'],
-      })
-      .then((response) => {
-      console.log(response.start)
-
-      switch(response.start){
-        case 'Info':
+        ];
+          
+        inquirer.prompt(employeeQuestions)
+        .then((response) => {
+          console.log(response.start)
           console.log("The info case works");
-          addEmployee();
-          break;
-        case 'Role':
-          console.log("The Role case works");
-          addRole();
-          break;
-        case 'Department':
-          console.log("The department case works");
-            addDepartment();
-          break;
-        case 'End':
-          connection.end();
-          break;
-        default:
-          console.log("Something went wrong");
+          addMethods.data.addEmployee(response.firstName, response.lastName,
+          response.roleId, response.manager);
           start();
+        })
+      break;
 
-      }
 
+    case 'Add Department':
+      const departmentQuestions = [
+        {
+          name: 'departName',
+          type: 'input',
+          message: 'What is the name of the Department?',
+        },
+        ]
+          
+        inquirer.prompt(departmentQuestions)
+        .then((response) => {
+        console.log(response);
+       
+        console.log("The department case works");
+        addMethods.data.addDepartment(response.departName);
+        start();
+      })
+      break;
+
+    
+    case 'Add Role':
+      const roleQuestions = [
       
-      
+        {
+          name: 'title',
+          type: 'input',
+          message: 'What is the title for this role?',
+        },                                                  
+        {
+          name: 'salary',
+          type: 'input',
+          message: 'What is the Salary for this role?',
+        },
+        {
+          name: 'departId',
+          type: 'input',
+          message: 'What is the department ID?',
+        },
+        ]
+          
+        inquirer.prompt(roleQuestions)
+        .then((response) => {
+        console.log(response)
+        console.log("The add role worked");
+        addMethods.data.addRole(response.title, response.salary, response.departId);
+        start();
+        })
+        break;
 
-      console.log(`Listing on port 3306`);
-         
+
+    case 'View Employees':
+      viewMethods.data.viewEmployees();
+      start()
+      break;
+
+    case 'View Roles':
+      viewMethods.data.viewRoles();
+      start();
+      break;
+
+    case 'View Departments':
+      viewMethods.data.viewDepartments();
+      start();
+      break;
+
+    case 'View All':
+      viewMethods.data.viewAll();
+      start();
+      break;
+    
+    case 'Delete Employees, Roles, or Departments':
+      const deleteQuestions = [
+        {                                                    
+          name: 'delete',
+          type: 'list',
+          message: 'What would you like to delete?',
+          choices: ['Delete All Employees', 'Delete Employee by ID', 'Delete All Roles',
+           'Delete Role by title','Delete all departments', 'Delete department by name'],
+        },                                                                       
+        ];
+      
+        inquirer.prompt(deleteQuestions)
+        .then((response) => {
+          console.log(response.delete)
+          // console.log("The info case works");
+          switch(response.delete) {
+            case 'Delete All Employees':
+              console.log('delete case works');
+              deleteMethods.data.deleteAllEmployees();
+              start();
+            break;
+
+            case 'Delete Employee by ID':
+              const deleteEmployeeQuestion = [
+                {                                                    
+                  name: 'employeeNumber',
+                  type: 'input',
+                  message: 'What is the employee ID number you would like to delete?',
+                 
+                },                                                                       
+                ];
+              
+                inquirer.prompt(deleteEmployeeQuestion)
+                .then((response) => {
+                  console.log(response.employeeNumber);
+                  deleteMethods.data.deleteEmployee(response.employeeNumber);
+                  start();
+              
+                })
+              break;
+
+              case 'Delete All Roles':
+                console.log('delete roles case works');
+                deleteMethods.data.deleteAllRoles();
+                start();
+              break;
+
+              case 'Delete Role by title':
+                    const deleteRoleQuestion = [
+                    {                                                    
+                        name: 'roleTitle',
+                        type: 'input',
+                         message: 'What is the title of the role you would like to delete?',
+                 
+                    },                                                                       
+                    ];
+              
+                inquirer.prompt(deleteRoleQuestion)
+                .then((response) => {
+                  console.log(response.roleTitle);
+                  deleteMethods.data.deleteRole(response.roleTitle);
+                  start();
+              
+                })
+              break;
+
+              case 'Delete all departments':
+                console.log('delete departments case works');
+                deleteMethods.data.deleteAllDepartments();
+                start();
+              break;
+
+              case 'Delete department by name':
+                    const deleteDepartmentQuestion = [
+                    {                                                    
+                        name: 'departmentName',
+                        type: 'input',
+                         message: 'What is the name of the department you would like to delete?',
+                 
+                    },                                                                       
+                    ];
+              
+                inquirer.prompt(deleteDepartmentQuestion)
+                .then((response) => {
+                  console.log(response.departmentName);
+                  deleteMethods.data.deleteDepartment(response.departmentName);
+                  start();
+              
+                })
+              break;
+
+              default:
+                console.log("Something went wrong");
+          }
         
-      });
 
+        })
+        break;
+
+        case 'Update Roles':
+          const updateQuestions = [
+            {                                                    
+              name: 'update',
+              type: 'list',
+              message: 'What would you like to update?',
+              choices: ['update employee role', 'Delete Employee by ID', 'Delete All Roles',
+               'Delete Role by title','Delete all departments', 'Delete department by name'],
+            },                                                                       
+            ];
+          
+            inquirer.prompt(updateQuestions)
+            .then((response) => {
+              console.log(response.update)
+              // console.log("The info case works");
+              switch(response.update) {
+                case 'update employee role':
+                  const updateEmployeeRole = [
+                    {                                                    
+                      name: 'oldRole',
+                      type: 'input',
+                      message: 'What is the role title to update?',
+                     
+                    },
+                    {
+                      name: 'newRole',
+                      type: 'input',
+                      message: 'What is the new role title?',
+                    },
+
+                    ];
+                  
+                    inquirer.prompt(updateEmployeeRole)
+                    .then((response) => {
+                      console.log(response.oldRole);
+                      updateMethods.data.updateRole(response.oldRole, response.newRole);
+                      start();
+                  
+                    })
+                  break;
+    
+                  default:
+                    console.log("Something went wrong");
+              }
+            
+    
+            })
+            break;
+    case 'End':
+      connection.end();
+      break;
       
-  };
+    default:
+      console.log("Something went wrong");
+      start();
 
+  }
 
-connection.connect((err) => {
-  if (err) throw err;
-  // run the start function after the connection is made to prompt the user
-  start();
 });
 
+};
 
 
- 
+
+start()
+
+
+
   
 
 
@@ -212,7 +308,7 @@ connection.connect((err) => {
 
 
 
-// module.exports = start;
+module.exports.data = startMethods;
 
 
 
@@ -233,10 +329,7 @@ connection.connect((err) => {
 
 //   Build a command-line application that at a minimum allows the user to:
 
-//   * Add departments, roles, employees
-
-//   * View departments, roles, employees
-
+// fix view roles.
 //   * Update employee roles
 
 // Bonus points if you're able to:
@@ -244,8 +337,6 @@ connection.connect((err) => {
 //   * Update employee managers
 
 //   * View employees by manager
-
-//   * Delete departments, roles, and employees
 
 //   * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
