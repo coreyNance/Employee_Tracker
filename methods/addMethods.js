@@ -9,7 +9,7 @@ addMethods.addEmployee = (firstName, lastName,
 
         connection.query(
           'INSERT INTO employees SET ?',
-          {                                                       // This function works as expected.
+          {                                                       
             first_name: firstName,
             last_name: lastName,
             role_id: roleId,
@@ -29,7 +29,7 @@ addMethods.addDepartment = (departName) => {
           'INSERT INTO departments SET ?',
           {
             
-            name: departName,                                           // This function works as expected
+            name: departName,                                      
           },
           (err) => {
             if (err) throw err;
@@ -47,7 +47,7 @@ addMethods.addRole = (title, salary, departId) => {
         connection.query(
           'INSERT INTO employee_roles SET ?',
           {
-            title: title,                                  // This function works as expected.
+            title: title,                                 
             salary: salary || 0,
             department_id: departId
           },

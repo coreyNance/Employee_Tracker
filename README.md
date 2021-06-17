@@ -1,55 +1,25 @@
 # Employee Tracker
 
-The tasks is to create a **C**ontent **M**anagement **S**ystems. The assignment, is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
-
-
-
-
-## Submission on BCS
-
-You are required to submit the following:
-
-* The URL of the GitHub repository
-
-* A video demonstrating the entirety of the app's functionality 
-
-- - -
-© 2021 Trilogy Education Services, LLC, a 2U, Inc. brand. Confidential and Proprietary. All Rights Reserved.
-
- 
 ## Description
 
-
+The tasks is to create a **C**ontent **M**anagement **S**ystems. The assignment, is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
 
 ## User Story
 
-
-AS A manager
-I WANT to generate a webpage that displays my team's basic info
-SO THAT I have quick access to their emails and GitHub profiles
+As a business owner
+I want to be able to view and manage the departments, roles, and employees in my company
+So that I can organize and plan my business
 
 
 ## Acceptance Criteria
+Build a command-line application that at a minimum allows the user to:
 
-```md
-GIVEN a command-line application that accepts user input
-WHEN I am prompted for my team members and their information
-THEN an HTML file is generated that displays a nicely formatted team roster based on user input
-WHEN I click on an email address in the HTML
-THEN my default email program opens and populates the TO field of the email with the address
-WHEN I click on the GitHub username
-THEN that GitHub profile opens in a new tab
-WHEN I start the application
-THEN I am prompted to enter the team manager’s name, employee ID, email address, and office number
-WHEN I enter the team manager’s name, employee ID, email address, and office number
-THEN I am presented with a menu with the option to add an engineer or an intern or to finish building my team
-WHEN I select the engineer option
-THEN I am prompted to enter the engineer’s name, ID, email, and GitHub username, and I am taken back to the menu
-WHEN I select the intern option
-THEN I am prompted to enter the intern’s name, ID, email, and school, and I am taken back to the menu
-WHEN I decide to finish building my team
-THEN I exit the application, and the HTML is generated
-```
+  * Add departments, roles, employees
+
+  * View departments, roles, employees
+
+  * Update employee roles
+
 
 ## Table
 
@@ -69,11 +39,11 @@ Once pulled over from gitHub onto your local machine.
     
 - Once the window comes up with the file. Just double click the file and the file will open up in the browser of your choice. 
 
+
 ## Screenshot/video link
-[![Screenshot/video link](assets/images/screenshot.png)](https://youtu.be/yCu6CIEPg24)
+[![Screenshot/video link](Assets/images/screenshot.png)](https://youtu.be/pUDFF4eHPfk)
 <br>  
-![Screenshot](assets/images/webpage.png)
-<br>
+
 
 ## Credits
 https://bootcamp.unh.edu/ 
@@ -83,8 +53,24 @@ https://coding-boot-camp.github.io/full-stack/github/professional-readme-guide
 https://choosealicense.com/
     
 ## Repository
- https://github.com/coreyNance/Team_Profile_Generator
+https://github.com/coreyNance/Employee_Tracker
 
+
+## Future Development
+
+- Incorporate Async/Await funtionality to allow for cleaner code
+
+- shorten start menu options
+
+- add function to update employee managers
+
+- add function to view employees by manager
+
+- add function to View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+
+- reduce user created errors by using get functions to retrieve employees from data base instead of relying on user input. 
+
+- Add a more efficient video to readme to fit within the 5min time limit.
 
 ## License
 

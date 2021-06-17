@@ -17,7 +17,7 @@ let startMethods = {};
       {
         name: 'start',
         type: 'list',
-        message: 'Please Select either add a new Employee, or add a Department, or view Employees, Roles, Deparments, or all. ',
+        message: 'Please Select what you would like to do ',
         choices: ['Add New Employee', 'Add Department', 'Add Role', 'View Employees', 'View Roles',
         'View Departments', 'View All', 'Delete Employees, Roles, or Departments','Update Roles', 'End'],
       },  
@@ -26,7 +26,6 @@ let startMethods = {};
 inquirer.prompt(startQuestions)
 
 .then((response) => {
-  // console.log(response)
 
   switch(response.start){
     case 'Add New Employee':
@@ -148,7 +147,6 @@ inquirer.prompt(startQuestions)
         inquirer.prompt(deleteQuestions)
         .then((response) => {
           console.log(response.delete)
-          // console.log("The info case works");
           switch(response.delete) {
             case 'Delete All Employees':
               console.log('delete case works');
@@ -247,7 +245,6 @@ inquirer.prompt(startQuestions)
             inquirer.prompt(updateQuestions)
             .then((response) => {
               console.log(response.update)
-              // console.log("The info case works");
               switch(response.update) {
                 case 'update employee role':
                   const updateEmployeeRole = [
@@ -298,12 +295,6 @@ inquirer.prompt(startQuestions)
 
 
 start()
-
-
-
-  
-
-
 
 
 
